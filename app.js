@@ -1,11 +1,17 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const dotenv = require('dotenv');
 
 const app = express();
 
-app.use('/', (req, res, next) => {
-  res.send('<h1>Food Delivery Website</h1>');
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.get('/api/foods', (req, res) => {
+  res.status(200).send('Hello from server');
 });
 
-app.listen(3000, () => {
-  console.log('Server Running...');
+const port = process.env.PORT || 3000;
+
+app.listen(port, () => {
+  console.log(`Server Running on port ${port}...`);
 });
