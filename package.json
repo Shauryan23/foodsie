@@ -1,0 +1,26 @@
+{
+  "name": "food-delivery-website",
+  "version": "1.0.0",
+  "description": "Food Delivery Website Using MERN Stack",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shauryan23/Food-Delivery-Website.git"
+  },
+  "author": "Shauryan Singh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Shauryan23/Food-Delivery-Website/issues"
+  },
+  "homepage": "https://github.com/Shauryan23/Food-Delivery-Website#readme",
+  "dependencies": {
+    "express": "^4.17.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
