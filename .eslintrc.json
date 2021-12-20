@@ -6,6 +6,7 @@
       "error",
       {
         "endOfLine": "auto"
+        // "usePrettierrc": false
       }
     ],
     "spaced-comment": "off",
