@@ -1,17 +1,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const dotenv = require('dotenv');
+const morgan = require('morgan');
+
+const foodRouter = require('./routes/foodRoutes');
 
 const app = express();
 
+if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
+
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.get('/api/foods', (req, res) => {
-  res.status(200).send('Hello from server');
-});
+app.use('/foods', foodRouter);
 
-const port = process.env.PORT || 3000;
-
-app.listen(port, () => {
-  console.log(`Server Running on port ${port}...`);
-});
+module.exports = app;
