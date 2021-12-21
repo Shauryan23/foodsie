@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 dotenv.config({ path: './util/config.env' });
 
 const app = require('./app');
-const connectDB = require('./util/db');
+const connectDB = require('./util/database');
 
 connectDB();
 
