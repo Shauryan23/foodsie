@@ -34,11 +34,11 @@ const FoodSchema = new Schema({
     type: Boolean,
     default: true,
     require: true,
-    // To-do: Modify the delivery attribute to be conditionally available.
-    // delivery: {
-    // type: String,
-    // enum: ['Available', 'Not Available'],
-    // require: true,
+    delivery: {
+      type: String,
+      enum: ['Available', 'Not Available'],
+      require: true,
+    },
   },
   prepTime: {
     type: Number,
@@ -84,6 +84,10 @@ const FoodSchema = new Schema({
       lastUpdated: {
         type: Date,
         default: null,
+      },
+      custService: {
+        type: Number,
+        required: true,
       },
     },
     select: false, //hides data
