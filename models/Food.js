@@ -5,30 +5,31 @@ const { Schema } = mongoose;
 const FoodSchema = new Schema({
   foodName: {
     type: String,
-    required: true,
+    required: [true, 'Name of the Dish is Required'],
     trim: true,
   },
   madeBy: {
     type: Schema.Types.ObjectId,
-    required: true,
+    ref: 'Restaurant',
+    required: [true, 'Please Specify the Provider of the Dish'],
   },
   price: {
     type: Number,
-    required: true,
+    required: [true, 'Price for a Dish is Required'],
   },
   category: {
     type: String,
-    required: true,
+    required: [true, 'Please Provide the Appropriate Category'],
     trim: true,
   },
   subCategory: {
     type: String,
-    required: true,
+    required: [true, 'Please Provide the Appropriate Sub-Category'],
     trim: true,
   },
   isVeg: {
     type: Boolean,
-    required: true,
+    required: [true, 'Please Specify if the Dish is Veg or Non-Veg'],
   },
   isAvailabe: {
     type: Boolean,
@@ -45,7 +46,7 @@ const FoodSchema = new Schema({
   },
   description: {
     type: String,
-    required: true,
+    required: [true, 'Please Provide a Short Description of the Dish'],
     trim: true,
   },
   ratingsAverage: {
@@ -61,6 +62,7 @@ const FoodSchema = new Schema({
     {
       user: {
         type: Schema.Types.ObjectId,
+        ref: 'User',
         required: true,
       },
       text: {
@@ -87,11 +89,22 @@ const FoodSchema = new Schema({
       },
       custService: {
         type: Number,
-        required: true,
+        required: [
+          true,
+          'Please Provide Customer Service Number of your Business',
+        ],
       },
     },
     select: false, //hides data
   },
 });
+
+FoodSchema.statics.findByCategory = function (category) {
+  return this.find({ category });
+};
+
+// FoodSchema.query.byCategory = function (category) {
+//   return this.find({ category });
+// };
 
 module.exports = mongoose.model('Food', FoodSchema);

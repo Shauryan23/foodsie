@@ -27,6 +27,10 @@ const ProfileSchema = new Schema({
     type: [String],
     default: null,
   },
+  restOwned: {
+    type: [Schema.Types.ObjectId],
+    ref: 'Restaurant',
+  },
   orders: {
     type: [Schema.Types.ObjectId],
     default: null,

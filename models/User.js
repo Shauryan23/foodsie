@@ -20,7 +20,7 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
-    // restOwned: [Schema.Types.ObjectId],
+    restOwned: [Schema.Types.ObjectId],
     metaData: {
       timeLog: {
         createdAt: {

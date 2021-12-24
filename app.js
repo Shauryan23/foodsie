@@ -10,6 +10,6 @@ if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use('/foods', foodRouter);
+app.use('/', foodRouter);
 
 module.exports = app;

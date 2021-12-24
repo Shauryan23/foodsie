@@ -31,7 +31,6 @@ const OwnerSchema = User.discriminator(
         type: [String],
         required: true,
       },
-      restOwned: [Schema.Types.ObjectId],
     },
     options
   )

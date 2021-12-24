@@ -5,6 +5,7 @@ const { Schema } = mongoose;
 const RestaurantSchema = new Schema({
   ownedBy: {
     type: Schema.Types.ObjectId,
+    ref: 'Owner',
     required: true,
   },
   FoodType: {
@@ -19,14 +20,18 @@ const RestaurantSchema = new Schema({
       type: String,
       required: true,
     },
-    restMobile: [Number],
+    restMobile: {
+      type: [Number],
+      required: true,
+      unique: true,
+    },
     required: true,
-    unique: true,
   },
   reviews: [
     {
       user: {
         type: Schema.Types.ObjectId,
+        ref: 'User',
       },
       text: {
         type: String,
@@ -57,3 +62,18 @@ const RestaurantSchema = new Schema({
 });
 
 module.exports = mongoose.model('Restaurant', RestaurantSchema);
+
+/* 
+{
+    "_id": {
+        "$oid": "61c56161d5cfffc9e7413999"
+    },
+    "ownedBy": {
+        "$oid": "61c56161d5cfffc9e74owner"
+    },
+    "contacts": {
+      "restEmail": "test@test.com",
+      "restNumber": [9898989898]
+    }
+}
+*/
