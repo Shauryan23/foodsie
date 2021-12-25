@@ -21,8 +21,8 @@ FoodSchema.statics.findByCategory = function (category) {
   return this.find({ category });
 };
 
-// FoodSchema.query.byCategory = function (category) {
-//   return this.find({ category });
-// };
+FoodSchema.query.findBySubCategory = function (subCategory) {
+  return this.where({ subCategory });
+};
 
 module.exports = mongoose.model('Food', FoodSchema);

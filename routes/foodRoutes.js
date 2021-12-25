@@ -9,7 +9,11 @@ const router = express.Router();
 //   next();
 // });
 
+router.post('/', foodController.postFood);
+
 router.get('/', foodController.getAllFoods);
+
+router.get('/:category/:subcategory', foodController.getFoodBySubCategory);
 
 router.get('/:category', foodController.getFoodByCategory);
 
