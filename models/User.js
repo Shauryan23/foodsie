@@ -11,28 +11,8 @@ const UserSchema = new Schema(
       required: true,
       unique: true,
     },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-    restOwned: [Schema.Types.ObjectId],
-    metaData: {
-      timeLog: {
-        createdAt: {
-          type: Date,
-          default: Date.now(),
-        },
-        lastUpdated: {
-          type: Date,
-          default: null,
-        },
-      },
-      select: false, //hides data
+    restOwned: {
+      type: [Schema.Types.ObjectId],
     },
   },
   options

@@ -11,8 +11,6 @@ const router = express.Router();
 
 router.get('/', foodController.getAllFoods);
 
-router.get('/:type', (req, res) => {
-  res.send(`Special Type of food Searched`);
-});
+router.get('/:category', foodController.getFoodByCategory);
 
 module.exports = router;
