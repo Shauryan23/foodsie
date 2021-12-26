@@ -9,12 +9,16 @@ const router = express.Router();
 //   next();
 // });
 
-router.post('/', foodController.postFood);
+router.get('/food/:id', foodController.getFoodbyId);
+
+router.get('/:category/:subcategory?', foodController.getFoodByCategory);
 
 router.get('/', foodController.getAllFoods);
 
-router.get('/:category/:subcategory', foodController.getFoodBySubCategory);
+router.post('/', foodController.postFood);
 
-router.get('/:category', foodController.getFoodByCategory);
+router.patch('/:id', foodController.editFood);
+
+router.delete('/:id', foodController.deleteFood);
 
 module.exports = router;
