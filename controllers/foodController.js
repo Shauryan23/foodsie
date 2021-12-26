@@ -2,13 +2,13 @@ const Food = require('../models/Food');
 
 exports.getAllFoods = async (req, res) => {
   try {
-    const foods = await Food.find();
+    const foods = await Food.find().select('-metaData');
     res.status(200).json(foods);
   } catch (err) {
     res.status(500).json({
       status: 'Failed',
       message: 'Server Error: Failed to Retrieve Data from Server!',
-      Error: err,
+      err,
     });
   }
 };
@@ -46,7 +46,7 @@ exports.getFoodbyId = async (req, res) => {
     res.status(404).json({
       status: 'Failed',
       message: 'Dish Not Found',
-      Error: err,
+      err,
     });
   }
 };
@@ -57,6 +57,18 @@ exports.postFood = async (req, res) => {
       foodName: req.body.foodName,
       category: req.body.category,
       subCategory: req.body.subCategory,
+      madeBy: req.body.madeBy,
+      price: req.body.price,
+      isVeg: req.body.isVeg,
+      isAvailable: req.body.isAvailable,
+      prepTime: req.body.prepTime,
+      description: req.body.description,
+      ratingsAverage: req.body.ratingsAverage,
+      ratingsQuantity: req.body.ratingsQuantity,
+      priceDiscount: req.body.priceDiscount,
+      reviews: req.body.reviews,
+      custService: req.body.custService,
+      metaData: req.body.metaData,
     });
 
     const food = await newFood.save();
@@ -69,7 +81,7 @@ exports.postFood = async (req, res) => {
     res.status(500).json({
       status: 'failed',
       message: 'Server Error: Failed Storing the Data.',
-      Error: err,
+      err,
     });
   }
 };
@@ -84,7 +96,7 @@ exports.editFood = async (req, res) => {
     res.status(503).json({
       status: 'failed',
       message: 'Server Error: Data Updation Process Failed.',
-      Error: err,
+      err,
     });
   }
 };
@@ -107,7 +119,16 @@ exports.deleteFood = async (req, res) => {
     res.json({
       status: 'Failed',
       message: 'Data Removal Process Failed',
-      Error: err,
+      err,
     });
+  }
+};
+
+exports.deleteAllFoods = async (req, res) => {
+  try {
+    await Food.deleteMany();
+    res.status(204);
+  } catch (err) {
+    res.status(400).json('Data Deletion Process Failed');
   }
 };

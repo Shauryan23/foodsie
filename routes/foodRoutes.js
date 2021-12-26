@@ -9,7 +9,7 @@ const router = express.Router();
 //   next();
 // });
 
-router.get('/food/:id', foodController.getFoodbyId);
+router.get('/foods/:id', foodController.getFoodbyId);
 
 router.get('/:category/:subcategory?', foodController.getFoodByCategory);
 
@@ -20,5 +20,7 @@ router.post('/', foodController.postFood);
 router.patch('/:id', foodController.editFood);
 
 router.delete('/:id', foodController.deleteFood);
+
+router.delete('/foods/deleteAll', foodController.deleteAllFoods);
 
 module.exports = router;
