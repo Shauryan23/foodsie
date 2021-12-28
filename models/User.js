@@ -19,26 +19,4 @@ const UserSchema = new Schema(
   options,
 );
 
-const User = mongoose.model('User', UserSchema);
-
-const OwnerSchema = User.discriminator(
-  'Owner',
-  new Schema(
-    {
-      isOwner: {
-        type: Boolean,
-        required: true,
-      },
-      restName: {
-        type: String,
-        required: true,
-      },
-    },
-    options,
-  ),
-);
-
-module.exports = {
-  User: mongoose.model('User', UserSchema),
-  Owner: OwnerSchema,
-};
+module.exports = mongoose.model('User', UserSchema);

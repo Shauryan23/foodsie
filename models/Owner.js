@@ -1,9 +1,26 @@
-// const mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-// const { Schema } = mongoose;
+const { Schema } = mongoose;
 
-// const User = require('./User');
+const User = require('./User');
 
-// const options = { discriminatorKey: 'kind' };
+const options = { discriminatorKey: 'kind' };
 
-// module.exports = mongoose.model('Owner', OwnerSchema);
+const OwnerSchema = User.discriminator(
+  'Owner',
+  new Schema(
+    {
+      isOwner: {
+        type: Boolean,
+        required: true,
+      },
+      restName: {
+        type: String,
+        required: true,
+      },
+    },
+    options,
+  ),
+);
+
+module.exports = OwnerSchema;

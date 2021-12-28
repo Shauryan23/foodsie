@@ -1,5 +1,5 @@
-const { User, Owner } = require('../models/User');
-// const Owner = require('../models/Owner');
+const User = require('../models/User');
+const Owner = require('../models/Owner');
 
 exports.addUser = async (req, res) => {
   try {
