@@ -5,8 +5,8 @@
     "prettier/prettier": [
       "error",
       {
-        "endOfLine": "auto"
-        // "usePrettierrc": false
+        "endOfLine": "auto",
+        "usePrettierrc": false
       }
     ],
     "spaced-comment": "off",
