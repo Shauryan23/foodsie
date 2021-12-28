@@ -2,21 +2,6 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-// const FoodSchema = new Schema({
-//   foodName: {
-//     type: String,
-//     required: true,
-//   },
-//   category: {
-//     type: String,
-//     required: true,
-//   },
-//   subCategory: {
-//     type: String,
-//     required: true,
-//   },
-// });
-
 const FoodSchema = new Schema({
   foodName: {
     type: String,
@@ -124,19 +109,3 @@ FoodSchema.query.findBySubCategory = function (subCategory) {
 };
 
 module.exports = mongoose.model('Food', FoodSchema);
-
-// {
-//     "foodName": "Cheese Chilli Momos",
-//     "category": "Dish",
-//     "subCategory": "Fast-Food",
-//     "price": 80,
-//     "isVeg": "true",
-//     "serviceProvided": {
-//       "isAvailable": "true",
-//       "delivery": "Available"
-//     },
-//     "prepTime": 20,
-//     "description": "Soft Momos Filled With Cheese",
-//     "ratingsAverage": 4,
-//     "ratingsQuantity": 20,
-// }
