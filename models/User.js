@@ -12,10 +12,33 @@ const UserSchema = new Schema(
       unique: true,
     },
     restOwned: {
-      type: [Schema.Types.ObjectId],
+      // type: [Schema.Types.ObjectId],
+      type: Number,
     },
   },
-  options
+  options,
 );
 
-module.exports = mongoose.model('User', UserSchema);
+const User = mongoose.model('User', UserSchema);
+
+const OwnerSchema = User.discriminator(
+  'Owner',
+  new Schema(
+    {
+      isOwner: {
+        type: Boolean,
+        required: true,
+      },
+      restName: {
+        type: String,
+        required: true,
+      },
+    },
+    options,
+  ),
+);
+
+module.exports = {
+  User: mongoose.model('User', UserSchema),
+  Owner: OwnerSchema,
+};
