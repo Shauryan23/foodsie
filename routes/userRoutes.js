@@ -4,8 +4,6 @@ const userController = require('../controllers/userController');
 
 const router = express.Router();
 
-router.post('/addUser', userController.addUser);
-
-router.post('/addOwner', userController.addOwner);
+router.post('/', userController.addUser);
 
 module.exports = router;

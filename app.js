@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
 app.use(bodyParser.json());
 
-app.use('/user-route', userRouter);
+app.use('/users', userRouter);
 
 app.use('/', foodRouter);
 
