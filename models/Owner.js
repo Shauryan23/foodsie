@@ -16,6 +16,7 @@ const OwnerSchema = new Schema(
       {
         restId: {
           type: Schema.Types.ObjectId,
+          required: true,
         },
         restName: {
           type: String,
@@ -30,7 +31,6 @@ const OwnerSchema = new Schema(
           type: [String],
           required: true,
         },
-        required: true,
       },
     ],
   },

@@ -8,6 +8,12 @@ const RestaurantSchema = new Schema({
     ref: 'User',
     required: true,
   },
+  foodsAvailable: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Food',
+    },
+  ],
 });
 
 module.exports = mongoose.model('Restaurant', RestaurantSchema);

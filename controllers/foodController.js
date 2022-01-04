@@ -13,11 +13,12 @@ exports.getAllFoods = async (req, res) => {
   }
 };
 
+// If there is an error might be because of the , on line 21 after req.params.category
 exports.getFoodByCategory = async (req, res) => {
   try {
     if (req.params.subcategory) {
       const foodsInCategory = await Food.findByCategory(
-        req.params.category
+        req.params.category,
       ).findBySubCategory(req.params.subcategory);
       if (foodsInCategory.length === 0) {
         return res.send('No Data Found!');
