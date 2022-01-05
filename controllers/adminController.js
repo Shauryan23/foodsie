@@ -4,6 +4,7 @@ const Restaurant = require('../models/Restaurant');
 exports.getAllVerificationRequests = async (req, res) => {
   try {
     const verRequests = await RestaurantVerification.find();
+
     res.status(200).json({
       status: 'Success',
       message: 'Restaurant Verification Requests Data Retrieved Successfully!',
@@ -23,6 +24,7 @@ exports.getRestVerificationRequest = async (req, res) => {
     const restRequest = await RestaurantVerification.find({
       restId: req.params.restId,
     });
+
     res.status(200).json({
       status: 'Success',
       message: 'Restaurant Verification Request Retrieved Successfully!',
@@ -72,6 +74,7 @@ exports.reviewRestVerificationRequest = async (req, res) => {
         new: true,
       },
     );
+
     res.status(200).json(verStatus);
   } catch (err) {
     res.status(503).json({

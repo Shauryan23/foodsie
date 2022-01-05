@@ -3,6 +3,7 @@ const Food = require('../models/Food');
 exports.getAllFoods = async (req, res) => {
   try {
     const foods = await Food.find().select('-metaData');
+
     res.status(200).json(foods);
   } catch (err) {
     res.status(500).json({
@@ -20,15 +21,19 @@ exports.getFoodByCategory = async (req, res) => {
       const foodsInCategory = await Food.findByCategory(
         req.params.category,
       ).findBySubCategory(req.params.subcategory);
+
       if (foodsInCategory.length === 0) {
         return res.send('No Data Found!');
       }
+
       res.status(200).json(foodsInCategory);
     } else {
       const foodsInCategory = await Food.findByCategory(req.params.category);
+
       if (foodsInCategory.length === 0) {
         return res.status(404).send('No Data Found!');
       }
+
       res.status(200).json(foodsInCategory);
     }
   } catch (err) {
@@ -39,6 +44,7 @@ exports.getFoodByCategory = async (req, res) => {
 exports.getFoodbyId = async (req, res) => {
   try {
     const food = await Food.findById(req.params.id);
+
     res.json({
       status: 'Success',
       food,
@@ -92,6 +98,7 @@ exports.editFood = async (req, res) => {
     const food = await Food.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
+
     res.status(200).json(food);
   } catch (err) {
     res.status(503).json({
@@ -128,6 +135,7 @@ exports.deleteFood = async (req, res) => {
 exports.deleteAllFoods = async (req, res) => {
   try {
     await Food.deleteMany();
+
     res.status(204);
   } catch (err) {
     res.status(400).json('Data Deletion Process Failed');
