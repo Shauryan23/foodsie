@@ -8,11 +8,11 @@ const FoodSchema = new Schema({
     required: [true, 'Name of the Dish is Required'],
     trim: true,
   },
-  // madeBy: {
-  //   type: Schema.Types.ObjectId,
-  //   ref: 'Restaurant',
-  //   required: [true, 'Please Specify the Provider of the Dish'],
-  // },
+  madeBy: {
+    type: Schema.Types.ObjectId,
+    ref: 'Restaurant',
+    required: [true, 'Please Specify the Provider of the Dish'],
+  },
   price: {
     type: Number,
     required: [true, 'Price for a Dish is Required'],

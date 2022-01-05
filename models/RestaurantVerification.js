@@ -14,22 +14,25 @@ const RestaurantVerificationSchema = new Schema({
     required: true,
   },
   restDetails: {
-    ownerDetails: {
-      type: Schema.Types.ObjectId,
-      required: true,
-    },
-    restId: {
-      type: Schema.Types.ObjectId,
-      required: true,
-    },
-    restName: {
-      type: String,
-      required: true,
-    },
-    restDocs: {
-      type: [String],
-      required: true,
-    },
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    // ownerDetails: {
+    //   type: Schema.Types.ObjectId,
+    //   required: true,
+    // },
+    // restId: {
+    //   type: Schema.Types.ObjectId,
+    //   required: true,
+    // },
+    // restName: {
+    //   type: String,
+    //   required: true,
+    // },
+    // restDocs: {
+    //   type: [String],
+    //   required: true,
+    // },
   },
   issues: {
     issuesRaised: {

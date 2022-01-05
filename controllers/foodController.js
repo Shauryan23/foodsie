@@ -110,7 +110,7 @@ exports.deleteFood = async (req, res) => {
       return res.status(404).json({ msg: 'Food Data Not Found!' });
     }
 
-    await food.remove();
+    await Food.findOneAndDelete(food);
 
     res.json({
       status: 'Success',

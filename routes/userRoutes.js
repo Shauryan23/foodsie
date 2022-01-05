@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.post('/', userController.addUser);
 
-router.post('/applyVerification', userController.assignVerification);
+router.post('/:id', userController.addOwner);
+
+// router.post('/applyVerification', userController.assignVerification);
 
 module.exports = router;

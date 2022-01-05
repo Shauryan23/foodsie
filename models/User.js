@@ -11,27 +11,27 @@ const UserSchema = new Schema(
       required: true,
       unique: true,
     },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-    metaData: {
-      timeLog: {
-        createdAt: {
-          type: Date,
-          default: Date.now(),
-        },
-        lastUpdated: {
-          type: Date,
-          default: null,
-        },
-      },
-    },
+    // email: {
+    //   type: String,
+    //   required: true,
+    //   unique: true,
+    // },
+    // password: {
+    //   type: String,
+    //   required: true,
+    // },
+    // metaData: {
+    //   timeLog: {
+    //     createdAt: {
+    //       type: Date,
+    //       default: Date.now(),
+    //     },
+    //     lastUpdated: {
+    //       type: Date,
+    //       default: null,
+    //     },
+    //   },
+    // },
   },
   options,
 );
