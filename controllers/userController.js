@@ -39,11 +39,10 @@ exports.addOwner = async (req, res) => {
       userName: userDetails.userName,
       email: userDetails.email,
       password: userDetails.password,
-    });
-
-    newOwner.restDetails.unshift({
-      restId: mongoose.Types.ObjectId(),
-      restName: req.body.restName,
+      restDetails: {
+        restId: mongoose.Types.ObjectId(),
+        restName: req.body.restName,
+      },
     });
 
     session.startTransaction();
@@ -69,10 +68,44 @@ exports.addOwner = async (req, res) => {
   }
 };
 
+exports.addRestaurant = async (req, res) => {
+  try {
+    const ownerDetails = await Owner.findById(req.params.id);
+
+    ownerDetails.metaData.timeLog.lastUpdated = Date.now();
+
+    ownerDetails.restDetails.unshift({
+      restId: mongoose.Types.ObjectId(),
+      restName: req.body.restName,
+    });
+
+    const owner = await ownerDetails.save();
+
+    res.json({
+      status: 'Success',
+      owner,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: 'failed',
+      message: 'Server Error: Failed Storing the Data. Please Try Again Later',
+      err,
+    });
+  }
+};
+
 exports.assignVerification = async (req, res) => {
   try {
+    const query = await Owner.findById(req.params.id).select('restDetails');
+
+    const restDetails = {
+      ownerDetails: req.params.id,
+      restId: query.restDetails.restId,
+      restName: query.restDetails.restName,
+    };
+
     const restVerify = new RestaurantVerification({
-      restDetails: req.body.restDetails,
+      restDetails: restDetails,
       isReviwed: false,
       isVerified: false,
     });
@@ -82,6 +115,7 @@ exports.assignVerification = async (req, res) => {
     res.status(200).json({
       status: 'Success',
       message: 'Applied For Verification',
+      restVerify,
     });
   } catch (err) {
     res.status(500).json({
@@ -92,6 +126,6 @@ exports.assignVerification = async (req, res) => {
   }
 };
 
-// "userName": "Yash",
-//   "email": "Yash@gmail.com",
-//   "password": "Yash123"
+// "userName": "Shauryan",
+// "email": "Shauryan@gmail.com",
+// "password": "Shauryan123"

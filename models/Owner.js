@@ -13,29 +13,27 @@ const OwnerSchema = new Schema(
       default: false,
       required: true,
     },
-    restDetails: [
-      {
-        _id: false,
-        restId: {
-          type: Schema.Types.ObjectId,
-          required: true,
-        },
-        restName: {
-          type: String,
-          required: true,
-        },
-        verfication: {
-          type: String,
-          enum: ['Verified', 'Pending', 'Rejected'],
-          default: 'Pending',
-          required: true,
-        },
-        // restDocs: {
-        //   type: [String],
-        //   required: true,
-        // },
+    restDetails: {
+      _id: false,
+      restId: {
+        type: Schema.Types.ObjectId,
+        required: true,
       },
-    ],
+      restName: {
+        type: String,
+        required: true,
+      },
+      verfication: {
+        type: String,
+        enum: ['Verified', 'Pending', 'Rejected'],
+        default: 'Pending',
+        required: true,
+      },
+      // restDocs: {
+      //   type: [String],
+      //   required: true,
+      // },
+    },
   },
   options,
 );
