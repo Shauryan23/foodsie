@@ -28,6 +28,8 @@ exports.addUser = async (req, res) => {
 };
 
 exports.addOwner = async (req, res) => {
+  const session = await mongoose.startSession();
+
   try {
     const userDetails = await User.findById(req.params.id).select(
       '-_id -metaData -__v',
@@ -44,7 +46,6 @@ exports.addOwner = async (req, res) => {
       restName: req.body.restName,
     });
 
-    const session = await mongoose.startSession();
     session.startTransaction();
 
     await User.findByIdAndDelete(req.params.id, { session: session });
@@ -58,6 +59,8 @@ exports.addOwner = async (req, res) => {
       owner,
     });
   } catch (err) {
+    session.abortTransaction();
+
     res.status(500).json({
       status: 'failed',
       message: 'Server Error: Failed Storing the Data. Please Try Again Later',
@@ -89,6 +92,6 @@ exports.assignVerification = async (req, res) => {
   }
 };
 
-// "userName": "Shauryan",
-//   "email": "Shauryan@gmail.com",
-//   "password": "Shauryan123"
+// "userName": "Yash",
+//   "email": "Yash@gmail.com",
+//   "password": "Yash123"
