@@ -11,14 +11,14 @@ router.get(
   adminController.getRestVerificationRequest,
 );
 
-router.post(
-  '/:adminId/:password/:restId',
-  adminController.grantRestVerificationRequest,
-);
-
 router.patch(
   '/:adminId/:password/:restId',
   adminController.reviewRestVerificationRequest,
+);
+
+router.post(
+  '/:adminId/:password/:restId',
+  adminController.grantRestVerificationRequest,
 );
 
 router.delete(

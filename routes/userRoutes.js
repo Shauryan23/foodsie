@@ -8,7 +8,7 @@ router.post('/verification/:id', userController.assignVerification);
 
 router.post('/owner/:id', userController.addOwner);
 
-router.patch('/owner/:id', userController.addRestaurant);
+// router.patch('/owner/:id', userController.addRestaurant);
 
 router.post('/', userController.addUser);
 

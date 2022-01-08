@@ -94,6 +94,7 @@ exports.addRestaurant = async (req, res) => {
   }
 };
 
+// Add a more descriptive Error to notify if the user has resgistered as owner
 exports.assignVerification = async (req, res) => {
   try {
     const query = await Owner.findById(req.params.id).select('restDetails');

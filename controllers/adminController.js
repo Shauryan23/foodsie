@@ -3,12 +3,13 @@ const Restaurant = require('../models/Restaurant');
 
 exports.getAllVerificationRequests = async (req, res) => {
   try {
-    const verRequests = await RestaurantVerification.find();
+    const verificationRequests = await RestaurantVerification.find();
 
     res.status(200).json({
       status: 'Success',
-      message: 'Restaurant Verification Requests Data Retrieved Successfully!',
-      verRequests,
+      message:
+        'All Restaurant Verification Requests Data Retrieved Successfully!',
+      verificationRequests,
     });
   } catch (err) {
     res.status(500).json({
@@ -21,8 +22,8 @@ exports.getAllVerificationRequests = async (req, res) => {
 
 exports.getRestVerificationRequest = async (req, res) => {
   try {
-    const restRequest = await RestaurantVerification.find({
-      restId: req.params.restId,
+    const restRequest = await RestaurantVerification.findOne({
+      'restDetails.restId': req.params.restId,
     });
 
     res.status(200).json({
@@ -39,43 +40,35 @@ exports.getRestVerificationRequest = async (req, res) => {
   }
 };
 
-exports.grantRestVerificationRequest = async (req, res) => {
-  try {
-    if (!(req.body.isReviewed === false || req.body.isVerified === false)) {
-      res.send('Restaurant is Not Verifier Yet!');
-
-      const newRestaurant = new Restaurant({
-        restDetails: req.body.restDetails,
-      });
-
-      const restaurant = await newRestaurant.save();
-
-      res.status(201).json({
-        status: 'Success',
-        message: 'Restaurant Was Setup Successfully',
-        restaurant,
-      });
-    }
-  } catch (err) {
-    res.status(500).json({
-      status: 'Failed',
-      message: 'Server Error: Error Setting Up The Restaurant',
-      err,
-    });
-  }
-};
-
 exports.reviewRestVerificationRequest = async (req, res) => {
   try {
-    const verStatus = await RestaurantVerification.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
-      },
-    );
+    const verificationDetails = await RestaurantVerification.findOne({
+      'restDetails.restId': req.params.restId,
+    });
 
-    res.status(200).json(verStatus);
+    verificationDetails.timeLog.lastReviewedAt = Date.now();
+
+    verificationDetails.issues.issueStatement.unshift(req.body.issue);
+
+    const issueArrayLength = verificationDetails.issues.issueStatement.length;
+
+    verificationDetails.issues.issuesRaised = issueArrayLength;
+
+    verificationDetails.isReviewed = true;
+
+    if (!issueArrayLength.isEmpty) {
+      verificationDetails.isVerified = false;
+    } else {
+      verificationDetails.isVerified = true;
+    }
+
+    const updatedVerificationDetails = await verificationDetails.save();
+
+    res.status(200).json({
+      status: 'Success',
+      message: 'Restaurant Verification Status Updated Successfully',
+      updatedVerificationDetails,
+    });
   } catch (err) {
     res.status(503).json({
       status: 'failed',
@@ -85,15 +78,55 @@ exports.reviewRestVerificationRequest = async (req, res) => {
   }
 };
 
+exports.grantRestVerificationRequest = async (req, res) => {
+  try {
+    const verificationDetails = await RestaurantVerification.findOne({
+      'restDetails.restId': req.params.restId,
+    });
+
+    if (
+      verificationDetails.isReviewed === false ||
+      verificationDetails.isVerified === false
+    ) {
+      return res.json({
+        status: 'Failed',
+        message: 'Restaurant is Not Verified Yet!',
+      });
+    }
+
+    const newRestaurant = new Restaurant({
+      restId: req.body.restId,
+      restName: verificationDetails.restDetails.restName,
+      ownerDetails: verificationDetails.restDetails.ownerDetails,
+    });
+
+    const restaurant = await newRestaurant.save();
+
+    res.status(201).json({
+      status: 'Success',
+      message: 'Restaurant Was Created Successfully',
+      restaurant,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: 'Failed',
+      message: 'Server Error: Error in Creating the Restaurant',
+      err,
+    });
+  }
+};
+
 exports.deleteVerificationRequest = async (req, res) => {
   try {
-    const verRequest = await RestaurantVerification.findById(req.params.id);
+    const verificationRequest = await RestaurantVerification.findOne({
+      'restDetails.restId': req.params.restId,
+    });
 
-    if (!verRequest) {
+    if (!verificationRequest) {
       return res.status(404).json({ msg: 'Food Data Not Found!' });
     }
 
-    await RestaurantVerification.remove();
+    await verificationRequest.remove();
 
     res.json({
       status: 'Success',
