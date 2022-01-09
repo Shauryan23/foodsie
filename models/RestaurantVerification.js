@@ -34,13 +34,11 @@ const RestaurantVerificationSchema = new Schema({
   issues: {
     issuesRaised: {
       type: Number,
-      required: true,
       default: 0,
     },
     issueStatement: [
       {
         type: String,
-        required: true,
       },
     ],
   },

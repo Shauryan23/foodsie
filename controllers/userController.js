@@ -99,6 +99,8 @@ exports.assignVerification = async (req, res) => {
   try {
     const query = await Owner.findById(req.params.id).select('restDetails');
 
+    // Add Error Handler Logic To check if query object is empty and send the response
+
     const restDetails = {
       ownerDetails: req.params.id,
       restId: query.restDetails.restId,

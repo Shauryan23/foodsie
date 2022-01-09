@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const RestaurantVerification = require('../models/RestaurantVerification');
 const Restaurant = require('../models/Restaurant');
 
@@ -48,7 +50,9 @@ exports.reviewRestVerificationRequest = async (req, res) => {
 
     verificationDetails.timeLog.lastReviewedAt = Date.now();
 
-    verificationDetails.issues.issueStatement.unshift(req.body.issue);
+    if (req.body.issue) {
+      verificationDetails.issues.issueStatement.unshift(req.body.issue);
+    }
 
     const issueArrayLength = verificationDetails.issues.issueStatement.length;
 
@@ -56,7 +60,7 @@ exports.reviewRestVerificationRequest = async (req, res) => {
 
     verificationDetails.isReviewed = true;
 
-    if (!issueArrayLength.isEmpty) {
+    if (issueArrayLength !== 0) {
       verificationDetails.isVerified = false;
     } else {
       verificationDetails.isVerified = true;
@@ -79,6 +83,8 @@ exports.reviewRestVerificationRequest = async (req, res) => {
 };
 
 exports.grantRestVerificationRequest = async (req, res) => {
+  const session = await mongoose.startSession();
+
   try {
     const verificationDetails = await RestaurantVerification.findOne({
       'restDetails.restId': req.params.restId,
@@ -95,12 +101,19 @@ exports.grantRestVerificationRequest = async (req, res) => {
     }
 
     const newRestaurant = new Restaurant({
-      restId: req.body.restId,
+      restId: req.params.restId,
       restName: verificationDetails.restDetails.restName,
       ownerDetails: verificationDetails.restDetails.ownerDetails,
     });
 
-    const restaurant = await newRestaurant.save();
+    session.startTransaction();
+
+    const restaurant = await newRestaurant.save({ session: session });
+
+    await verificationDetails.remove({ session: session });
+
+    await session.commitTransaction();
+    session.endSession();
 
     res.status(201).json({
       status: 'Success',
@@ -108,6 +121,8 @@ exports.grantRestVerificationRequest = async (req, res) => {
       restaurant,
     });
   } catch (err) {
+    session.abortTransaction();
+
     res.status(500).json({
       status: 'Failed',
       message: 'Server Error: Error in Creating the Restaurant',
