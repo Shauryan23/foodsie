@@ -22,6 +22,7 @@ const OwnerSchema = new Schema(
       restName: {
         type: String,
         required: true,
+        trim: true,
       },
       verfication: {
         type: String,

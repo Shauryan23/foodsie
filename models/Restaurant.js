@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const RestaurantSchema = new Schema({
-  // _id: false,
   restId: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -17,7 +16,7 @@ const RestaurantSchema = new Schema({
     ref: 'User',
     required: true,
   },
-  foodsAvailable: [
+  foods: [
     {
       type: Schema.Types.ObjectId,
       ref: 'Food',

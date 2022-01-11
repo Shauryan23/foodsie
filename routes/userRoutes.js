@@ -6,10 +6,12 @@ const router = express.Router();
 
 router.post('/verification/:id', userController.assignVerification);
 
-router.post('/owner/:id', userController.addOwner);
+router.post('/login', userController.login);
 
 // router.patch('/owner/:id', userController.addRestaurant);
 
-router.post('/', userController.addUser);
+router.post('/owner/:id', userController.signupOwner);
+
+router.post('/signup', userController.signupUser);
 
 module.exports = router;

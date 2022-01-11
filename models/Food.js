@@ -14,11 +14,13 @@ const FoodSchema = new Schema({
     required: [true, 'Please Specify the Provider of the Dish'],
   },
   price: {
+    //Validation for pricision
     type: Number,
     required: [true, 'Price for a Dish is Required'],
   },
   category: {
     type: String,
+    enum: ['Dish', 'Cuisine'],
     required: [true, 'Please Provide the Appropriate Category'],
     trim: true,
   },

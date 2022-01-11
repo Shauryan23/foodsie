@@ -25,6 +25,7 @@ const RestaurantVerificationSchema = new Schema({
     restName: {
       type: String,
       required: true,
+      trim: true,
     },
     // restDocs: {
     //   type: [String],

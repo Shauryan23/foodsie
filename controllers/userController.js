@@ -3,20 +3,61 @@ const mongoose = require('mongoose');
 const User = require('../models/User');
 const Owner = require('../models/Owner');
 const RestaurantVerification = require('../models/RestaurantVerification');
+const signToken = require('../util/signToken');
 
-exports.addUser = async (req, res) => {
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        status: 'Failed',
+        message: 'Please Provide Email and Password.',
+      });
+    }
+
+    const user = await User.findOne({ email }).select('password');
+
+    if (!user || !(await user.checkPassword(password, user.password))) {
+      return res.status(401).json({
+        status: 'Failed',
+        message: 'Invalid Credentials',
+      });
+    }
+
+    const token = signToken(user._id);
+
+    res.status(200).json({
+      status: 'Success',
+      token,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: 'Failed',
+      message: 'Server Error: Please Try Again Later.',
+    });
+  }
+};
+
+exports.signupUser = async (req, res) => {
   try {
     const newUser = new User({
       userName: req.body.userName,
       email: req.body.email,
       password: req.body.password,
+      passwordConfirm: req.body.passwordConfirm,
     });
 
     const user = await newUser.save();
 
+    const token = signToken(user._id);
+
     res.status(201).json({
       status: 'Success',
-      user,
+      token,
+      data: {
+        user,
+      },
     });
   } catch (err) {
     res.status(500).json({
@@ -27,18 +68,19 @@ exports.addUser = async (req, res) => {
   }
 };
 
-exports.addOwner = async (req, res) => {
+exports.signupOwner = async (req, res) => {
   const session = await mongoose.startSession();
 
   try {
     const userDetails = await User.findById(req.params.id).select(
-      '-_id -metaData -__v',
+      '+password -_id -metaData -__v',
     );
 
     const newOwner = new Owner({
       userName: userDetails.userName,
       email: userDetails.email,
       password: userDetails.password,
+      passwordConfirm: userDetails.password,
       restDetails: {
         restId: mongoose.Types.ObjectId(),
         restName: req.body.restName,
@@ -53,9 +95,14 @@ exports.addOwner = async (req, res) => {
     await session.commitTransaction();
     session.endSession();
 
+    const token = signToken(owner._id);
+
     res.status(201).json({
       status: 'Success',
-      owner,
+      token,
+      data: {
+        owner,
+      },
     });
   } catch (err) {
     session.abortTransaction();

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const RestaurantVerification = require('../models/RestaurantVerification');
 const Restaurant = require('../models/Restaurant');
+const Owner = require('../models/Owner');
 
 exports.getAllVerificationRequests = async (req, res) => {
   try {
@@ -86,6 +87,10 @@ exports.grantRestVerificationRequest = async (req, res) => {
   const session = await mongoose.startSession();
 
   try {
+    const ownerDetails = await Owner.findOne({
+      'restDetails.restId': req.params.restId,
+    });
+
     const verificationDetails = await RestaurantVerification.findOne({
       'restDetails.restId': req.params.restId,
     });
@@ -106,9 +111,14 @@ exports.grantRestVerificationRequest = async (req, res) => {
       ownerDetails: verificationDetails.restDetails.ownerDetails,
     });
 
+    ownerDetails.verification = 'Verified';
+    ownerDetails.isOwner = true;
+
     session.startTransaction();
 
     const restaurant = await newRestaurant.save({ session: session });
+
+    await ownerDetails.save({ session: session });
 
     await verificationDetails.remove({ session: session });
 
