@@ -41,14 +41,14 @@ exports.login = async (req, res) => {
 
 exports.signupUser = async (req, res) => {
   try {
-    const newUser = new User({
+    const user = new User({
       userName: req.body.userName,
       email: req.body.email,
       password: req.body.password,
       passwordConfirm: req.body.passwordConfirm,
     });
 
-    const user = await newUser.save();
+    await user.save();
 
     const token = signToken(user._id);
 
@@ -56,7 +56,8 @@ exports.signupUser = async (req, res) => {
       status: 'Success',
       token,
       data: {
-        user,
+        username: user.userName,
+        email: user.email,
       },
     });
   } catch (err) {
@@ -76,7 +77,7 @@ exports.signupOwner = async (req, res) => {
       '+password -_id -metaData -__v',
     );
 
-    const newOwner = new Owner({
+    const owner = new Owner({
       userName: userDetails.userName,
       email: userDetails.email,
       password: userDetails.password,
@@ -90,7 +91,7 @@ exports.signupOwner = async (req, res) => {
     session.startTransaction();
 
     await User.findByIdAndDelete(req.params.id, { session: session });
-    const owner = await newOwner.save({ session: session });
+    await owner.save({ session: session });
 
     await session.commitTransaction();
     session.endSession();
@@ -101,7 +102,8 @@ exports.signupOwner = async (req, res) => {
       status: 'Success',
       token,
       data: {
-        owner,
+        restName: owner.restDetails.restName,
+        verification: owner.restDetails.verification,
       },
     });
   } catch (err) {
@@ -165,7 +167,6 @@ exports.assignVerification = async (req, res) => {
     res.status(200).json({
       status: 'Success',
       message: 'Applied For Verification',
-      restVerify,
     });
   } catch (err) {
     res.status(500).json({

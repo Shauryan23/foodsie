@@ -29,6 +29,13 @@ exports.getRestVerificationRequest = async (req, res) => {
       'restDetails.restId': req.params.restId,
     });
 
+    if (!restRequest) {
+      return res.status(404).json({
+        status: 'Failed',
+        message: 'No Request Found!',
+      });
+    }
+
     res.status(200).json({
       status: 'Success',
       message: 'Restaurant Verification Request Retrieved Successfully!',
@@ -87,9 +94,9 @@ exports.grantRestVerificationRequest = async (req, res) => {
   const session = await mongoose.startSession();
 
   try {
-    const ownerDetails = await Owner.findOne({
-      'restDetails.restId': req.params.restId,
-    });
+    // const ownerDetails = await Owner.findOne({
+    //   'restDetails.restId': req.params.restId,
+    // });
 
     const verificationDetails = await RestaurantVerification.findOne({
       'restDetails.restId': req.params.restId,
@@ -111,14 +118,20 @@ exports.grantRestVerificationRequest = async (req, res) => {
       ownerDetails: verificationDetails.restDetails.ownerDetails,
     });
 
-    ownerDetails.verification = 'Verified';
-    ownerDetails.isOwner = true;
+    // ownerDetails.verification = 'Verified';
+    // ownerDetails.isOwner = true;
 
     session.startTransaction();
 
     const restaurant = await newRestaurant.save({ session: session });
 
-    await ownerDetails.save({ session: session });
+    // await ownerDetails.save({ session: session });
+
+    await Owner.updateOne(
+      { 'restDetails.restId': req.params.restId },
+      { verification: 'Verified', isOwner: true },
+      { session: session },
+    );
 
     await verificationDetails.remove({ session: session });
 
@@ -135,7 +148,7 @@ exports.grantRestVerificationRequest = async (req, res) => {
 
     res.status(500).json({
       status: 'Failed',
-      message: 'Server Error: Error in Creating the Restaurant',
+      message: 'Server Error: Error in Setting up the Restaurant',
       err,
     });
   }

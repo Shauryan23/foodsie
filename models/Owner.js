@@ -24,7 +24,7 @@ const OwnerSchema = new Schema(
         required: true,
         trim: true,
       },
-      verfication: {
+      verification: {
         type: String,
         enum: ['Verified', 'Pending', 'Rejected'],
         default: 'Pending',
