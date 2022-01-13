@@ -1,143 +1,122 @@
+const catchAsync = require('../util/catchAsync');
+const AppError = require('../util/appError');
 const Food = require('../models/Food');
 
-exports.getAllFoods = async (req, res) => {
-  try {
-    const foods = await Food.find().populate('madeBy').select('-metaData');
+exports.getAllFoods = catchAsync(async (req, res, next) => {
+  const foods = await Food.find().populate('madeBy').select('-metaData');
 
-    res.status(200).json(foods);
-  } catch (err) {
-    res.status(500).json({
-      status: 'Failed',
-      message: 'Server Error: Failed to Retrieve Data from Server!',
-      err,
-    });
+  if (!foods) {
+    return next(new AppError('Oops! No Data Found for your Query', 404));
   }
-};
+
+  res.status(200).json({
+    status: 'Success',
+    foods,
+  });
+});
 
 // If there is an error might be because of the , on line 21 after req.params.category
-exports.getFoodByCategory = async (req, res) => {
-  try {
-    if (req.params.subcategory) {
-      const foodsInCategory = await Food.findByCategory(
-        req.params.category,
-      ).findBySubCategory(req.params.subcategory);
+exports.getFoodByCategory = catchAsync(async (req, res, next) => {
+  if (req.params.subcategory) {
+    const foodsInCategory = await Food.findByCategory(
+      req.params.category,
+    ).findBySubCategory(req.params.subcategory);
 
-      if (foodsInCategory.length === 0) {
-        return res.send('No Data Found!');
-      }
-
-      res.status(200).json(foodsInCategory);
-    } else {
-      const foodsInCategory = await Food.findByCategory(req.params.category);
-
-      if (foodsInCategory.length === 0) {
-        return res.status(404).send('No Data Found!');
-      }
-
-      res.status(200).json(foodsInCategory);
-    }
-  } catch (err) {
-    res.status(500).send('Server Error');
-  }
-};
-
-exports.getFoodbyId = async (req, res) => {
-  try {
-    const food = await Food.findById(req.params.id);
-
-    res.json({
-      status: 'Success',
-      food,
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: 'Failed',
-      message: 'Dish Not Found',
-      err,
-    });
-  }
-};
-
-exports.postFood = async (req, res) => {
-  try {
-    const newFood = new Food({
-      foodName: req.body.foodName,
-      category: req.body.category,
-      subCategory: req.body.subCategory,
-      madeBy: req.body.madeBy,
-      price: req.body.price,
-      isVeg: req.body.isVeg,
-      isAvailable: req.body.isAvailable,
-      prepTime: req.body.prepTime,
-      description: req.body.description,
-      ratingsAverage: req.body.ratingsAverage,
-      ratingsQuantity: req.body.ratingsQuantity,
-      priceDiscount: req.body.priceDiscount,
-      reviews: req.body.reviews,
-      custService: req.body.custService,
-      metaData: req.body.metaData,
-    });
-
-    const food = await newFood.save();
-
-    res.status(201).json({
-      status: 'Success',
-      food,
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: 'failed',
-      message: 'Server Error: Failed Storing the Data.',
-      err,
-    });
-  }
-};
-
-exports.editFood = async (req, res) => {
-  try {
-    const food = await Food.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-
-    res.status(200).json(food);
-  } catch (err) {
-    res.status(503).json({
-      status: 'failed',
-      message: 'Server Error: Data Updation Process Failed.',
-      err,
-    });
-  }
-};
-
-exports.deleteFood = async (req, res) => {
-  try {
-    const food = await Food.findById(req.params.id);
-
-    if (!food) {
-      return res.status(404).json({ msg: 'Food Data Not Found!' });
+    if (foodsInCategory.length === 0) {
+      return res.send('Oops! No Data Found for your Query', 404);
     }
 
-    await Food.findOneAndDelete(food);
-
-    res.json({
+    res.status(200).json({
       status: 'Success',
-      message: 'Food Data Removed Successfully.',
+      foodsInCategory,
     });
-  } catch (err) {
-    res.json({
-      status: 'Failed',
-      message: 'Data Removal Process Failed',
-      err,
+  } else {
+    const foodsInCategory = await Food.findByCategory(req.params.category);
+
+    if (foodsInCategory.length === 0) {
+      return res.send('Oops! No Data Found for your Query', 404);
+    }
+
+    res.status(200).json({
+      status: 'Success',
+      foodsInCategory,
     });
   }
-};
+});
 
-exports.deleteAllFoods = async (req, res) => {
-  try {
-    await Food.deleteMany();
+exports.getFoodbyId = catchAsync(async (req, res, next) => {
+  const food = await Food.findById(req.params.id);
 
-    res.status(204);
-  } catch (err) {
-    res.status(400).json('Data Deletion Process Failed');
+  if (!food) {
+    return next(new AppError('Oops! No Data Found for your Query', 404));
   }
-};
+
+  res.json({
+    status: 'Success',
+    food,
+  });
+});
+
+exports.postFood = catchAsync(async (req, res, next) => {
+  const newFood = new Food({
+    foodName: req.body.foodName,
+    category: req.body.category,
+    subCategory: req.body.subCategory,
+    madeBy: req.body.madeBy,
+    price: req.body.price,
+    isVeg: req.body.isVeg,
+    isAvailable: req.body.isAvailable,
+    prepTime: req.body.prepTime,
+    description: req.body.description,
+    ratingsAverage: req.body.ratingsAverage,
+    ratingsQuantity: req.body.ratingsQuantity,
+    priceDiscount: req.body.priceDiscount,
+    reviews: req.body.reviews,
+    custService: req.body.custService,
+    metaData: req.body.metaData,
+  });
+
+  const food = await newFood.save();
+
+  res.status(201).json({
+    status: 'Success',
+    food,
+  });
+});
+
+exports.editFood = catchAsync(async (req, res, next) => {
+  const food = await Food.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
+
+  res.status(200).json(food);
+});
+
+exports.deleteFood = catchAsync(async (req, res, next) => {
+  const food = await Food.findById(req.params.id);
+
+  if (!food) {
+    return next(
+      new AppError(
+        `No Food Data Corresponding to ${req.params.id} ID found!`,
+        404,
+      ),
+    );
+  }
+
+  await food.remove();
+
+  res.status(204).json({
+    status: 'Success',
+    message: 'Food Data Removed Successfully.',
+  });
+});
+
+exports.deleteAllFoods = catchAsync(async (req, res, next) => {
+  await Food.deleteMany();
+
+  res.status(204).json({
+    status: 'Success',
+    message: 'Food Data Removed Successfully.',
+  });
+});

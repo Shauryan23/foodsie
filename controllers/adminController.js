@@ -1,115 +1,108 @@
 const mongoose = require('mongoose');
 
+const AppError = require('../util/appError');
+const catchAsync = require('../util/catchAsync');
 const RestaurantVerification = require('../models/RestaurantVerification');
 const Restaurant = require('../models/Restaurant');
 const Owner = require('../models/Owner');
 
-exports.getAllVerificationRequests = async (req, res) => {
-  try {
-    const verificationRequests = await RestaurantVerification.find();
+exports.getAllVerificationRequests = catchAsync(async (req, res, next) => {
+  const verificationRequests = await RestaurantVerification.find();
 
-    res.status(200).json({
-      status: 'Success',
-      message:
-        'All Restaurant Verification Requests Data Retrieved Successfully!',
-      verificationRequests,
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: 'Failed',
-      message: 'Server Error: Failed to Retrieve Data from Server!',
-      err,
-    });
+  if (!this.getAllVerificationRequests) {
+    return next(new AppError('No Verification Requests found!', 404));
   }
-};
 
-exports.getRestVerificationRequest = async (req, res) => {
-  try {
-    const restRequest = await RestaurantVerification.findOne({
-      'restDetails.restId': req.params.restId,
-    });
+  res.status(200).json({
+    status: 'Success',
+    message:
+      'All Restaurant Verification Requests Data Retrieved Successfully!',
+    verificationRequests,
+  });
+});
 
-    if (!restRequest) {
-      return res.status(404).json({
-        status: 'Failed',
-        message: 'No Request Found!',
-      });
-    }
+exports.getRestVerificationRequest = catchAsync(async (req, res, next) => {
+  const restRequest = await RestaurantVerification.findOne({
+    'restDetails.restId': req.params.restId,
+  });
 
-    res.status(200).json({
-      status: 'Success',
-      message: 'Restaurant Verification Request Retrieved Successfully!',
-      restRequest,
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: 'Failed',
-      message: 'Server Error: Failed to Retrieve Data from Server!',
-      err,
-    });
+  if (!restRequest) {
+    return next(
+      new AppError(
+        `No Verification Request with Restaurant ID: ${req.params.restId} found!`,
+        404,
+      ),
+    );
   }
-};
 
-exports.reviewRestVerificationRequest = async (req, res) => {
-  try {
-    const verificationDetails = await RestaurantVerification.findOne({
-      'restDetails.restId': req.params.restId,
-    });
+  res.status(200).json({
+    status: 'Success',
+    message: 'Restaurant Verification Request Retrieved Successfully!',
+    restRequest,
+  });
+});
 
-    verificationDetails.timeLog.lastReviewedAt = Date.now();
+exports.reviewRestVerificationRequest = catchAsync(async (req, res, next) => {
+  const verificationDetails = await RestaurantVerification.findOne({
+    'restDetails.restId': req.params.restId,
+  });
 
-    if (req.body.issue) {
-      verificationDetails.issues.issueStatement.unshift(req.body.issue);
-    }
-
-    const issueArrayLength = verificationDetails.issues.issueStatement.length;
-
-    verificationDetails.issues.issuesRaised = issueArrayLength;
-
-    verificationDetails.isReviewed = true;
-
-    if (issueArrayLength !== 0) {
-      verificationDetails.isVerified = false;
-    } else {
-      verificationDetails.isVerified = true;
-    }
-
-    const updatedVerificationDetails = await verificationDetails.save();
-
-    res.status(200).json({
-      status: 'Success',
-      message: 'Restaurant Verification Status Updated Successfully',
-      updatedVerificationDetails,
-    });
-  } catch (err) {
-    res.status(503).json({
-      status: 'failed',
-      message: 'Server Error: Data Updation Process Failed.',
-      err,
-    });
+  if (!verificationDetails) {
+    return next(
+      new AppError(
+        `Verification Request With Restaurant ID: ${req.params.restId} Not Found!.`,
+        404,
+      ),
+    );
   }
-};
 
-exports.grantRestVerificationRequest = async (req, res) => {
+  verificationDetails.timeLog.lastReviewedAt = Date.now();
+
+  if (req.body.issue) {
+    verificationDetails.issues.issueStatement.unshift(req.body.issue);
+  }
+
+  const issueArrayLength = verificationDetails.issues.issueStatement.length;
+
+  verificationDetails.issues.issuesRaised = issueArrayLength;
+
+  verificationDetails.isReviewed = true;
+
+  if (issueArrayLength !== 0) {
+    verificationDetails.isVerified = false;
+  } else {
+    verificationDetails.isVerified = true;
+  }
+
+  const updatedVerificationDetails = await verificationDetails.save();
+
+  res.status(200).json({
+    status: 'Success',
+    message: 'Restaurant Verification Status Updated Successfully',
+    updatedVerificationDetails,
+  });
+});
+
+exports.grantRestVerificationRequest = async (req, res, next) => {
   const session = await mongoose.startSession();
 
   try {
-    // const ownerDetails = await Owner.findOne({
-    //   'restDetails.restId': req.params.restId,
-    // });
-
     const verificationDetails = await RestaurantVerification.findOne({
       'restDetails.restId': req.params.restId,
     });
+
+    if (!verificationDetails) {
+      return res.status(404).json({
+        status: 'Failed',
+        message: `Verification Request With Restaurant ID: ${req.params.restId} Not Found!.`,
+      });
+    }
 
     if (
       verificationDetails.isReviewed === false ||
       verificationDetails.isVerified === false
     ) {
-      return res.json({
-        status: 'Failed',
-        message: 'Restaurant is Not Verified Yet!',
-      });
+      return next(new AppError('Restaurant is Not Verified Yet!', 400));
     }
 
     const newRestaurant = new Restaurant({
@@ -118,14 +111,9 @@ exports.grantRestVerificationRequest = async (req, res) => {
       ownerDetails: verificationDetails.restDetails.ownerDetails,
     });
 
-    // ownerDetails.verification = 'Verified';
-    // ownerDetails.isOwner = true;
-
     session.startTransaction();
 
     const restaurant = await newRestaurant.save({ session: session });
-
-    // await ownerDetails.save({ session: session });
 
     await Owner.updateOne(
       { 'restDetails.restId': req.params.restId },
@@ -154,27 +142,24 @@ exports.grantRestVerificationRequest = async (req, res) => {
   }
 };
 
-exports.deleteVerificationRequest = async (req, res) => {
-  try {
-    const verificationRequest = await RestaurantVerification.findOne({
-      'restDetails.restId': req.params.restId,
-    });
+exports.deleteVerificationRequest = catchAsync(async (req, res, next) => {
+  const verificationRequest = await RestaurantVerification.findOne({
+    'restDetails.restId': req.params.restId,
+  });
 
-    if (!verificationRequest) {
-      return res.status(404).json({ msg: 'Food Data Not Found!' });
-    }
-
-    await verificationRequest.remove();
-
-    res.json({
-      status: 'Success',
-      message: 'Food Data Removed Successfully.',
-    });
-  } catch (err) {
-    res.json({
-      status: 'Failed',
-      message: 'Data Removal Process Failed',
-      err,
-    });
+  if (!verificationRequest) {
+    return next(
+      new AppError(
+        `Verification Request With Restaurant ID: ${req.params.restId} Not Found!.`,
+        404,
+      ),
+    );
   }
-};
+
+  await verificationRequest.remove();
+
+  res.json({
+    status: 'Success',
+    message: 'Food Data Removed Successfully.',
+  });
+});

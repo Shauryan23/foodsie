@@ -6,16 +6,11 @@ const DB = process.env.DATABASE.replace(
 );
 
 const connectDB = async () => {
-  try {
-    await mongoose.connect(DB, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log('MongoDB connected');
-  } catch (error) {
-    console.log(error.message);
-    process.exit(1);
-  }
+  await mongoose.connect(DB, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  console.log('MongoDB connected');
 };
 
 module.exports = connectDB;
