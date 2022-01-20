@@ -5,7 +5,11 @@ const authController = require('../controllers/authController');
 
 const router = express.Router();
 
-router.post('/verification/:id', userController.assignVerification);
+router.post(
+  '/verification/:id',
+  authController.auth,
+  userController.assignVerification,
+);
 
 router.post('/login', userController.login);
 

@@ -50,6 +50,10 @@ exports.signupUser = catchAsync(async (req, res, next) => {
   });
 });
 
+/* After Creating Owner _id changes so 
+1. Either Make _id same even after creating the owner
+2. After creating the owner, Ask user to login again and then commit the transaction
+*/
 exports.signupOwner = async (req, res, next) => {
   const session = await mongoose.startSession();
 
@@ -57,6 +61,13 @@ exports.signupOwner = async (req, res, next) => {
     const userDetails = await User.findById(req.params.id).select(
       '+password -_id -metaData -__v',
     );
+
+    if (!userDetails) {
+      return res.status(400).json({
+        status: 'Failed',
+        message: 'User Does Not Exists!',
+      });
+    }
 
     const owner = new Owner({
       userName: userDetails.userName,
@@ -76,6 +87,7 @@ exports.signupOwner = async (req, res, next) => {
     await owner.save({ session: session });
 
     await session.commitTransaction();
+
     session.endSession();
 
     const token = signToken(owner._id);
@@ -89,13 +101,10 @@ exports.signupOwner = async (req, res, next) => {
       },
     });
   } catch (err) {
-    session.abortTransaction();
+    if (session.transaction.state === 'STARTING_TRANSACTION')
+      session.abortTransaction();
 
-    res.status(500).json({
-      status: 'failed',
-      message: 'Server Error: Failed Storing the Data. Please Try Again Later',
-      err,
-    });
+    next(err);
   }
 };
 

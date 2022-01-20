@@ -83,7 +83,7 @@ exports.reviewRestVerificationRequest = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.grantRestVerificationRequest = async (req, res, next) => {
+exports.grantRestVerificationRequest = catchAsync(async (req, res, next) => {
   const session = await mongoose.startSession();
 
   try {
@@ -132,15 +132,12 @@ exports.grantRestVerificationRequest = async (req, res, next) => {
       restaurant,
     });
   } catch (err) {
-    session.abortTransaction();
+    if (session.transaction.state === 'STARTING_TRANSACTION')
+      session.abortTransaction();
 
-    res.status(500).json({
-      status: 'Failed',
-      message: 'Server Error: Error in Setting up the Restaurant',
-      err,
-    });
+    next(err);
   }
-};
+});
 
 exports.deleteVerificationRequest = catchAsync(async (req, res, next) => {
   const verificationRequest = await RestaurantVerification.findOne({
