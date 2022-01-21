@@ -11,6 +11,12 @@ router.post(
   userController.assignVerification,
 );
 
+router.post('/forgotPassword', authController.forgotPassword);
+
+router.patch('/resetPassword/:token', authController.resetPassword);
+
+router.patch('/updateMyPassword', authController.updatePassword);
+
 router.post('/login', userController.login);
 
 // router.patch('/owner/:id', userController.addRestaurant);
