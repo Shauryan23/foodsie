@@ -14,7 +14,7 @@ const FoodSchema = new Schema({
     required: [true, 'Please Specify the Provider of the Dish'],
   },
   price: {
-    //Validation for pricision
+    //Validation for precision
     type: Number,
     required: [true, 'Price for a Dish is Required'],
   },

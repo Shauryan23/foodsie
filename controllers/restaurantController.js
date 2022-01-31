@@ -43,7 +43,10 @@ exports.editFood = catchAsync(async (req, res, next) => {
     new: true,
   });
 
-  res.status(200).json(food);
+  res.status(200).json({
+    status: 'Success',
+    food,
+  });
 });
 
 exports.deleteFood = catchAsync(async (req, res, next) => {

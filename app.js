@@ -7,6 +7,7 @@ const errorHandler = require('./controllers/errorController');
 const foodRouter = require('./routes/foodRoutes');
 const userRouter = require('./routes/userRoutes');
 const adminRouter = require('./routes/adminRoutes');
+const profileRouter = require('./routes/profileRoutes');
 
 const app = express();
 
@@ -19,6 +20,8 @@ app.use(bodyParser.json());
 app.use('/admin', adminRouter);
 
 app.use('/users', userRouter);
+
+app.use('/profile', profileRouter);
 
 app.use('/foods', foodRouter);
 
