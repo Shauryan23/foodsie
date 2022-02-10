@@ -56,3 +56,5 @@ exports.getFoodbyId = catchAsync(async (req, res, next) => {
     food,
   });
 });
+
+// Add route to post food

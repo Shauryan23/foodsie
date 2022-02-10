@@ -5,6 +5,9 @@ const authController = require('../controllers/authController');
 
 const router = express.Router();
 
+/* Check again if JWT token verification takes place before applying for verification[*Below Route]
+  by applying for verification for different restaurant id while signing in with different user
+*/
 router.post(
   '/verification/:id',
   authController.auth,

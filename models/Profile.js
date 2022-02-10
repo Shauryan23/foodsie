@@ -6,7 +6,7 @@ const ProfileSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
-    immutable: (doc) => doc.kind !== 'Owner',
+    // immutable: (doc) => doc.kind !== 'Owner',
     required: true,
     select: false,
   },

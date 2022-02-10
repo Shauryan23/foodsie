@@ -1,5 +1,3 @@
-const mongoose = require('mongoose');
-
 const AppError = require('../util/appError');
 const catchAsync = require('../util/catchAsync');
 const Profile = require('../models/Profile');
@@ -37,9 +35,11 @@ exports.editProfile = catchAsync(async (req, res, next) => {
   });
 });
 
+/*
 exports.removeAddress = catchAsync(async (req, res, next) => {
   const profile = await Profile.findById(req.body);
 
   //profile.address =
   // Find a way to remove the desired address and also way to update
 });
+*/

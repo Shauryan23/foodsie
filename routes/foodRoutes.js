@@ -9,6 +9,8 @@ const router = express.Router();
 //   next();
 // });
 
+// Check if route below and next one after that work properly
+// Else : use query parameter for category as well
 router.get('/foods/:id', foodController.getFoodbyId);
 
 router.get('/:category/:subcategory?', foodController.getFoodByCategory);

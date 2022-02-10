@@ -37,13 +37,13 @@ app.use(xss());
 
 app.use(hpp());
 
-app.use('/admin', adminRouter);
+app.use('/api/admin', adminRouter);
 
-app.use('api/users', userRouter);
+app.use('/api/users', userRouter);
 
-app.use('api/profile', profileRouter);
+app.use('/api/profile', profileRouter);
 
-app.use('api/foods', foodRouter);
+app.use('/api/foods', foodRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`${req.originalUrl} not Found!`, 404));
