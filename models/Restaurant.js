@@ -19,7 +19,7 @@ const RestaurantSchema = new Schema({
   foods: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'Food',
+      ref: 'FoodItem',
     },
   ],
   createdAt: {

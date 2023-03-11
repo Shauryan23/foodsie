@@ -35,7 +35,7 @@ const ProfileSchema = new Schema({
   liked: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'Food',
+      ref: 'FoodItem',
     },
   ],
   Orders: [

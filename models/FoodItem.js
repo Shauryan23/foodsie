@@ -2,11 +2,38 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-const FoodSchema = new Schema({
+const reviewSchema = new Schema(
+  {
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    comment: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+)
+
+const FoodItemSchema = new Schema({
   foodName: {
     type: String,
     required: [true, 'Name of the Dish is Required'],
     trim: true,
+  },
+  image: {
+    type: String,
+    required: true,
   },
   madeBy: {
     type: Schema.Types.ObjectId,
@@ -62,25 +89,7 @@ const FoodSchema = new Schema({
     default: 0,
   },
   priceDiscount: Number,
-  reviews: [
-    {
-      user: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
-      },
-      text: {
-        type: String,
-        required: true,
-        trim: true,
-      },
-      name: {
-        type: String,
-        required: true,
-        trim: true,
-      },
-    },
-  ],
+  reviews: [reviewSchema],
   metaData: {
     custService: {
       type: Number,
@@ -102,12 +111,12 @@ const FoodSchema = new Schema({
   },
 });
 
-FoodSchema.statics.findByCategory = function (category) {
+FoodItemSchema.statics.findByCategory = function (category) {
   return this.find({ category }).select('-metaData');
 };
 
-FoodSchema.query.findBySubCategory = function (subCategory) {
+FoodItemSchema.query.findBySubCategory = function (subCategory) {
   return this.where({ subCategory }).select('-metaData');
 };
 
-module.exports = mongoose.model('Food', FoodSchema);
+module.exports = mongoose.model('FoodItem', FoodItemSchema);
