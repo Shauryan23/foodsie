@@ -1,9 +1,9 @@
 const catchAsync = require('../util/catchAsync');
 const AppError = require('../util/appError');
-const Food = require('../models/Food');
+const FoodItem = require('../models/FoodItem');
 
 exports.getAllFoods = catchAsync(async (req, res, next) => {
-  const foods = await Food.find().populate('madeBy').select('-metaData');
+  const foods = await FoodItem.find().populate('madeBy').select('-metaData');
 
   if (!foods) {
     return next(new AppError('Oops! No Data Found for your Query', 404));
@@ -18,7 +18,7 @@ exports.getAllFoods = catchAsync(async (req, res, next) => {
 // If there is an error might be because of the , on line 21 after req.params.category
 exports.getFoodByCategory = catchAsync(async (req, res, next) => {
   if (req.params.subcategory) {
-    const foodsInCategory = await Food.findByCategory(
+    const foodsInCategory = await FoodItem.findByCategory(
       req.params.category,
     ).findBySubCategory(req.params.subcategory);
 
@@ -45,7 +45,7 @@ exports.getFoodByCategory = catchAsync(async (req, res, next) => {
 });
 
 exports.getFoodbyId = catchAsync(async (req, res, next) => {
-  const food = await Food.findById(req.params.id);
+  const food = await FoodItem.findById(req.params.id);
 
   if (!food) {
     return next(new AppError('Oops! No Data Found for your Query', 404));

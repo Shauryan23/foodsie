@@ -1,6 +1,6 @@
 const catchAsync = require('../util/catchAsync');
 const AppError = require('../util/appError');
-const Food = require('../models/Food');
+const FoodItem = require('../models/FoodItem');
 
 exports.postFood = catchAsync(async (req, res, next) => {
   const madeBy = req.user.restDetails.restId;
@@ -12,7 +12,7 @@ exports.postFood = catchAsync(async (req, res, next) => {
     );
   }
 
-  const newFood = new Food({
+  const newFoodItem = new FoodItem({
     foodName: req.body.foodName,
     category: req.body.category,
     subCategory: req.body.subCategory,
@@ -30,29 +30,29 @@ exports.postFood = catchAsync(async (req, res, next) => {
     metaData: req.body.metaData,
   });
 
-  const food = await newFood.save();
+  const foodItem = await newFoodItem.save();
 
   res.status(201).json({
     status: 'Success',
-    food,
+    foodItem,
   });
 });
 
 exports.editFood = catchAsync(async (req, res, next) => {
-  const food = await Food.findByIdAndUpdate(req.params.id, req.body, {
+  const foodItem = await FoodItem.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
 
   res.status(200).json({
     status: 'Success',
-    food,
+    foodItem,
   });
 });
 
 exports.deleteFood = catchAsync(async (req, res, next) => {
-  const food = await Food.findById(req.params.id);
+  const foodItem = await FoodItem.findById(req.params.id);
 
-  if (!food) {
+  if (!foodItem) {
     return next(
       new AppError(
         `No Food Data Corresponding to ${req.params.id} ID found!`,
@@ -61,7 +61,7 @@ exports.deleteFood = catchAsync(async (req, res, next) => {
     );
   }
 
-  await food.remove();
+  await foodItem.remove();
 
   res.status(204).json({
     status: 'Success',
