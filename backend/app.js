@@ -13,6 +13,7 @@ const foodRouter = require('./routes/foodRoutes');
 const userRouter = require('./routes/userRoutes');
 const adminRouter = require('./routes/adminRoutes');
 const profileRouter = require('./routes/profileRoutes');
+const orderRouter = require('./routes/orderRoutes')
 
 const app = express();
 
@@ -44,6 +45,8 @@ app.use('/api/users', userRouter);
 app.use('/api/profile', profileRouter);
 
 app.use('/api/foods', foodRouter);
+
+app.use('/api/orders', orderRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`${req.originalUrl} not Found!`, 404));
